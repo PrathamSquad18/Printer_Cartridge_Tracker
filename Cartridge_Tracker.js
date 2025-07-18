@@ -114,9 +114,8 @@ function renderSummaries() {
         `;
 
         cart.logs.forEach((log, idx) => {
-            const perPageML = cart.ml / baseLimit; 
+            const perPageML = cart.ml / baseLimit;
             const inkUsed = (log.pages * USAGE_FACTORS[log.usage] * perPageML).toFixed(2);
-
             const entry = document.createElement("div");
             entry.className = "log-entry";
             entry.innerHTML = `
@@ -149,4 +148,21 @@ function renderSummaries() {
     }
 }
 
+// Show usage preview image
+function showUsagePreview() {
+    const type = document.getElementById("usageSelect").value;
+    const previewDiv = document.getElementById("usagePreview");
+    let imgSrc = "";
+    if (type === "light") imgSrc = "images/light.png";
+    if (type === "medium") imgSrc = "images/medium.png";
+    if (type === "heavy") imgSrc = "images/heavy.png";
+    previewDiv.innerHTML = `<img src="${imgSrc}" onclick="zoomImage('${imgSrc}')">`;
+}
+
+function zoomImage(src) {
+    document.getElementById("modalImg").src = src;
+    document.getElementById("imgModal").style.display = "flex";
+}
+
 renderSummaries();
+showUsagePreview();
