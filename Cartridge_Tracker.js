@@ -153,9 +153,9 @@ function showUsagePreview() {
     const type = document.getElementById("usageSelect").value;
     const previewDiv = document.getElementById("usagePreview");
     let imgSrc = "";
-    if (type === "light") imgSrc = "images/light.png";
-    if (type === "medium") imgSrc = "images/medium.png";
-    if (type === "heavy") imgSrc = "images/heavy.png";
+    if (type === "light") imgSrc = "light.png";
+    if (type === "medium") imgSrc = "medium.png";
+    if (type === "heavy") imgSrc = "heavy.png";
     previewDiv.innerHTML = `<img src="${imgSrc}" onclick="zoomImage('${imgSrc}')">`;
 }
 
