@@ -16,11 +16,13 @@
     <input type="number" id="pagesInput" min="1">
 
     <label>Usage Type:</label>
-    <select id="usageSelect">
+    <select id="usageSelect" onchange="showUsagePreview()">
         <option value="light">Light (Low Ink)</option>
         <option value="medium">Medium (Normal)</option>
         <option value="heavy">Heavy (High Ink)</option>
     </select>
+
+    <div class="usage-preview" id="usagePreview"></div>
 
     <label>Cartridge Type:</label>
     <select id="cartridgeSelect">
@@ -37,6 +39,11 @@
 </div>
 
 <div class="summary-container" id="summaryContainer"></div>
+
+<!-- Modal for zoomed image -->
+<div class="modal" id="imgModal" onclick="this.style.display='none'">
+    <img id="modalImg" src="">
+</div>
 
 <script src="Cartridge_Tracker.js"></script>
 </body>
