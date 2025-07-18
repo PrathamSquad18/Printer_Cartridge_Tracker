@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<title>Cartridge Ink Tracker</title>
+</head>
+<body>
+<h1>Printer Cartridge Tracker</h1>
+<div class="container">
+    <label>Date:</label>
+    <input type="date" id="dateInput">
+    
+    <label>Pages Printed:</label>
+    <input type="number" id="pagesInput" min="1">
+
+    <label>Usage Type:</label>
+    <select id="usageSelect">
+        <option value="light">Light (Low Ink)</option>
+        <option value="medium">Medium (Normal)</option>
+        <option value="heavy">Heavy (High Ink)</option>
+    </select>
+
+    <label>Cartridge Type:</label>
+    <select id="cartridgeSelect">
+        <option value="small">Small (~5ml, ~150 pages)</option>
+        <option value="medium">Medium (~10ml, ~300 pages)</option>
+        <option value="large">Large (~15ml, ~450 pages)</option>
+    </select>
+
+    <label>Refilled Ink (ml) (Optional):</label>
+    <input type="number" id="mlInput" placeholder="Leave empty to auto-calc">
+
+    <button onclick="addLog()">Add Log</button>
+    <button onclick="refillCartridge()">Refill (Set Cartridge)</button>
+</div>
+
+<div class="summary-container" id="summaryContainer"></div>
+
+<script src="Cartridge_Tracker.js"></script>
+</body>
+</html>
