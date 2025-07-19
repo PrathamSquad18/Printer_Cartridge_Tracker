@@ -33,7 +33,7 @@ label {
     font-size: clamp(14px, 2vw, 16px);
 }
 input, select {
-    width: 97%;
+    width: 98%;
     padding: 10px;
     border-radius: 6px;
     border: none;
