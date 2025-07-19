@@ -3,12 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" type="text/css" href="styles.css">
 <title>Cartridge Ink Tracker</title>
 </head>
 <body>
 <h1>Printer Cartridge Tracker</h1>
+
 <div class="container">
+    <!-- NEW MODE SELECTOR -->
+    <label>Cartridge Mode:</label>
+    <select id="modeSelect">
+        <option value="black">Black Cartridge</option>
+        <option value="color">Color Cartridge</option>
+    </select>
+
     <label>Date:</label>
     <input type="date" id="dateInput">
     
@@ -21,7 +29,6 @@
         <option value="medium">Medium (Normal)</option>
         <option value="heavy">Heavy (High Ink)</option>
     </select>
-
     <div class="usage-preview" id="usagePreview"></div>
 
     <label>Cartridge Type:</label>
@@ -38,13 +45,22 @@
     <button onclick="refillCartridge()">Refill (Set Cartridge)</button>
 </div>
 
-<div class="summary-container" id="summaryContainer"></div>
+<div class="summary-container">
+    <div class="summary-section">
+        <h2>Black Cartridges</h2>
+        <div id="blackSummary"></div>
+    </div>
+    <div class="summary-section">
+        <h2>Color Cartridges</h2>
+        <div id="colorSummary"></div>
+    </div>
+</div>
 
-<!-- Modal for zoomed image -->
 <div class="modal" id="imgModal" onclick="this.style.display='none'">
     <img id="modalImg" src="">
 </div>
 
 <script src="Cartridge_Tracker.js"></script>
+
 </body>
 </html>
