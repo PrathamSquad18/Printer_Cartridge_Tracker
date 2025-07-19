@@ -1,168 +1,118 @@
-const BASE_LIMITS = { small: 150, medium: 300, large: 450 };
-const DEFAULT_ML = { small: 5, medium: 10, large: 15 };
-const USAGE_FACTORS = { light: 1, medium: 1.5, heavy: 2 };
+const BASE_LIMITS = { small:150, medium:300, large:450 };
+const DEFAULT_ML = { small:5, medium:10, large:15 };
+const USAGE_FACTORS = { light:1, medium:1.5, heavy:2 };
 
-let cartridges = JSON.parse(localStorage.getItem("cartridgeData")) || {};
+// Split storage for black & color
+let cartridges = JSON.parse(localStorage.getItem("cartridgeDataV3")) || { black:{}, color:{} };
 
-function saveState() {
-    localStorage.setItem("cartridgeData", JSON.stringify(cartridges));
-    renderSummaries();
+function saveState(){ localStorage.setItem("cartridgeDataV3", JSON.stringify(cartridges)); renderSummaries(); }
+
+function refillCartridge(){
+    const mode=document.getElementById("modeSelect").value;
+    const type=document.getElementById("cartridgeSelect").value;
+    const ml=parseFloat(document.getElementById("mlInput").value)||DEFAULT_ML[type];
+    if(!cartridges[mode][type]) cartridges[mode][type]={ml,logs:[]};
+    else {cartridges[mode][type].ml=ml; cartridges[mode][type].logs=[];}
+    saveState(); alert(`Refill done for ${mode.toUpperCase()} - ${type.toUpperCase()} (${ml}ml)!`);
 }
 
-function refillCartridge() {
-    const type = document.getElementById("cartridgeSelect").value;
-    const ml = parseFloat(document.getElementById("mlInput").value) || DEFAULT_ML[type];
-    if (!cartridges[type]) cartridges[type] = { ml, logs: [] };
-    else { cartridges[type].ml = ml; cartridges[type].logs = []; }
-    saveState();
-    alert(`Refill done for ${type.toUpperCase()} Cartridge (${ml} ml)!`);
+function addLog(){
+    const date=document.getElementById("dateInput").value;
+    const pages=parseInt(document.getElementById("pagesInput").value);
+    const usage=document.getElementById("usageSelect").value;
+    const mode=document.getElementById("modeSelect").value;
+    const type=document.getElementById("cartridgeSelect").value;
+    if(!date||isNaN(pages)||pages<=0) return alert("Enter valid data!");
+    if(!cartridges[mode][type]) return alert("Please refill this cartridge first!");
+    cartridges[mode][type].logs.push({date,pages,usage,ml:cartridges[mode][type].ml});
+    saveState(); checkAlert(mode,type);
 }
 
-function editCartridge(type) {
-    const newML = prompt("Enter new ink (ml):", cartridges[type].ml);
-    if (newML !== null && !isNaN(parseFloat(newML))) {
-        cartridges[type].ml = parseFloat(newML);
-        saveState();
-    }
+function editLog(mode,type,index){
+    const val=prompt("Update page count:",cartridges[mode][type].logs[index].pages);
+    if(val!==null&&!isNaN(parseInt(val))){ cartridges[mode][type].logs[index].pages=parseInt(val); saveState();}
+}
+function deleteLog(mode,type,index){ if(confirm("Delete this log?")){ cartridges[mode][type].logs.splice(index,1); saveState(); } }
+function editCartridge(mode,type){
+    const val=prompt("Enter new ink (ml):",cartridges[mode][type].ml);
+    if(val!==null&&!isNaN(parseFloat(val))){ cartridges[mode][type].ml=parseFloat(val); saveState(); }
+}
+function deleteCartridge(mode,type){ if(confirm(`Delete ${mode} ${type} Cartridge?`)){ delete cartridges[mode][type]; saveState(); } }
+
+function checkAlert(mode,type){
+    const cart=cartridges[mode][type];
+    const total=cart.logs.reduce((s,l)=>s+l.pages*USAGE_FACTORS[l.usage],0);
+    const base=BASE_LIMITS[type]*(cart.ml/DEFAULT_ML[type]);
+    if(total>=base) alert(`⚠️ ${mode.toUpperCase()} ${type.toUpperCase()} used ~${total} pages (Limit ~${base}). Refill soon!`);
 }
 
-function addLog() {
-    const date = document.getElementById("dateInput").value;
-    const pages = parseInt(document.getElementById("pagesInput").value);
-    const usage = document.getElementById("usageSelect").value;
-    const type = document.getElementById("cartridgeSelect").value;
-    if (!date || isNaN(pages) || pages <= 0) return alert("Enter valid data!");
-    if (!cartridges[type]) return alert("Please refill this cartridge first!");
+function renderSummaries(){
+    ["black","color"].forEach(mode=>{
+        const container=document.getElementById(mode+"Summary");
+        container.innerHTML="";
+        for(let type in cartridges[mode]){
+            const cart=cartridges[mode][type];
+            const total=cart.logs.reduce((s,l)=>s+l.pages*USAGE_FACTORS[l.usage],0);
+            const base=BASE_LIMITS[type]*(cart.ml/DEFAULT_ML[type]);
+            const remaining=Math.max(0,base-total);
+            const percentage=Math.max(0,Math.min(100,(remaining/base)*100));
+            const remainingML=Math.max(0,cart.ml*(1-total/base));
 
-    cartridges[type].logs.push({ date, pages, usage, ml: cartridges[type].ml });
-    saveState();
-    checkAlert(type);
-}
+            // Estimate refill date (unchanged)
+            let avg=0; if(cart.logs.length){
+                const dates=cart.logs.map(l=>new Date(l.date));
+                const min=new Date(Math.min(...dates)); const max=new Date(Math.max(...dates));
+                const days=((max-min)/(1000*60*60*24))+1; avg=total/days;
+            }
+            let estDays=avg>0?remaining/avg:0;
+            let estDate=new Date(); estDate.setDate(estDate.getDate()+estDays);
 
-function editLog(type, index) {
-    const newPages = prompt("Update page count:", cartridges[type].logs[index].pages);
-    if (newPages !== null && !isNaN(parseInt(newPages))) {
-        cartridges[type].logs[index].pages = parseInt(newPages);
-        saveState();
-    }
-}
+            let barColor=percentage>60?"#00ff66":percentage>30?"#ffcc00":"#ff4444";
 
-function deleteLog(type, index) {
-    if (confirm("Delete this log?")) {
-        cartridges[type].logs.splice(index, 1);
-        saveState();
-    }
-}
-
-function deleteCartridge(type) {
-    if (confirm(`Delete ${type.toUpperCase()} Cartridge and its logs?`)) {
-        delete cartridges[type];
-        saveState();
-    }
-}
-
-function checkAlert(type) {
-    const cart = cartridges[type];
-    const totalPages = cart.logs.reduce((sum, l) => sum + l.pages * USAGE_FACTORS[l.usage], 0);
-    const baseLimit = (BASE_LIMITS[type] * (cart.ml / DEFAULT_ML[type]));
-    if (totalPages >= baseLimit) {
-        alert(`⚠️ ${type.toUpperCase()} Cartridge: ~${totalPages} pages used (Limit ~${baseLimit}). Refill soon!`);
-    }
-}
-
-function renderSummaries() {
-    const container = document.getElementById("summaryContainer");
-    container.innerHTML = "";
-
-    for (let type in cartridges) {
-        const cart = cartridges[type];
-        const totalPages = cart.logs.reduce((sum, l) => sum + l.pages * USAGE_FACTORS[l.usage], 0);
-        const baseLimit = (BASE_LIMITS[type] * (cart.ml / DEFAULT_ML[type]));
-        const remainingPages = Math.max(0, baseLimit - totalPages);
-        const percentage = Math.max(0, Math.min(100, (remainingPages / baseLimit) * 100));
-
-        const usedRatio = totalPages / baseLimit;
-        const remainingML = Math.max(0, cart.ml * (1 - usedRatio));
-
-        let avgPerDay = 0;
-        if (cart.logs.length > 0) {
-            const dates = cart.logs.map(l => new Date(l.date));
-            const minDate = new Date(Math.min(...dates));
-            const maxDate = new Date(Math.max(...dates));
-            const days = ((maxDate - minDate) / (1000*60*60*24)) + 1;
-            avgPerDay = totalPages / days;
-        }
-        let estDays = avgPerDay > 0 ? (remainingPages / avgPerDay) : 0;
-        let estDate = new Date();
-        estDate.setDate(estDate.getDate() + estDays);
-
-        let color = percentage > 60 ? "#00ff66" : percentage > 30 ? "#ffcc00" : "#ff4444";
-
-        const summaryBox = document.createElement("div");
-        summaryBox.className = "summary-box";
-        summaryBox.innerHTML = `
-            <h3>${type.toUpperCase()} Cartridge</h3>
-            <p><strong>Ink Filled:</strong> ${cart.ml} ml</p>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width:${percentage}%; background:${color}">
-                    ${percentage.toFixed(0)}% (${remainingML.toFixed(1)}ml left)
+            const box=document.createElement("div");
+            box.className="summary-box";
+            box.innerHTML=`
+                <h3>${mode.toUpperCase()} - ${type.toUpperCase()} Cartridge</h3>
+                <p><strong>Ink Filled:</strong> ${cart.ml} ml</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width:${percentage}%; background:${barColor}">
+                        ${percentage.toFixed(0)}% (${remainingML.toFixed(1)}ml left)
+                    </div>
                 </div>
-            </div>
-            <p><strong>Printed (Adj.):</strong> ${totalPages.toFixed(0)} pages</p>
-            <p><strong>Remaining:</strong> ${remainingPages.toFixed(0)} pages</p>
-            <p><strong>Next Refill:</strong> ${estDate.toDateString()} (${estDays.toFixed(1)} days)</p>
-        `;
-
-        cart.logs.forEach((log, idx) => {
-            const perPageML = cart.ml / baseLimit;
-            const inkUsed = (log.pages * USAGE_FACTORS[log.usage] * perPageML).toFixed(2);
-            const entry = document.createElement("div");
-            entry.className = "log-entry";
-            entry.innerHTML = `
-                <div>${log.date} - ${log.pages} pages (${log.usage}) | <strong>Ink Used:</strong> ${inkUsed} ml</div>
-                <div>
-                    <button onclick="editLog('${type}', ${idx})">Edit</button>
-                    <button onclick="deleteLog('${type}', ${idx})">Delete</button>
-                </div>
+                <p><strong>Printed (Adj.):</strong> ${total.toFixed(0)} pages</p>
+                <p><strong>Remaining:</strong> ${remaining.toFixed(0)} pages</p>
+                <p><strong>Next Refill:</strong> ${estDate.toDateString()} (${estDays.toFixed(1)} days)</p>
             `;
-            summaryBox.appendChild(entry);
-        });
 
-        const actionDiv = document.createElement("div");
-        actionDiv.className = "action-buttons";
-        const editBtn = document.createElement("button");
-        editBtn.className = "edit-cartridge";
-        editBtn.textContent = "Edit Cartridge";
-        editBtn.onclick = () => editCartridge(type);
+            cart.logs.forEach((log,i)=>{
+                const perPage=cart.ml/base; const used=(log.pages*USAGE_FACTORS[log.usage]*perPage).toFixed(2);
+                const entry=document.createElement("div"); entry.className="log-entry";
+                entry.innerHTML=`
+                    <div>${log.date} - ${log.pages} pages (${log.usage}) | <strong>Ink Used:</strong> ${used} ml</div>
+                    <div>
+                        <button onclick="editLog('${mode}','${type}',${i})">Edit</button>
+                        <button onclick="deleteLog('${mode}','${type}',${i})">Delete</button>
+                    </div>`;
+                box.appendChild(entry);
+            });
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "delete-cartridge";
-        deleteBtn.textContent = "Delete Cartridge";
-        deleteBtn.onclick = () => deleteCartridge(type);
-
-        actionDiv.appendChild(editBtn);
-        actionDiv.appendChild(deleteBtn);
-        summaryBox.appendChild(actionDiv);
-
-        container.appendChild(summaryBox);
-    }
+            const actions = document.createElement("div");
+			actions.className = "action-buttons";
+			actions.innerHTML = `
+				<button class="edit-cartridge" onclick="editCartridge('${mode}','${type}')">Edit Cartridge</button>
+				<button class="delete-cartridge" onclick="deleteCartridge('${mode}','${type}')">Delete Cartridge</button>
+			`;
+			box.appendChild(actions);
+			container.appendChild(box);
+        }
+    });
 }
 
-// Show usage preview image
-function showUsagePreview() {
-    const type = document.getElementById("usageSelect").value;
-    const previewDiv = document.getElementById("usagePreview");
-    let imgSrc = "";
-    if (type === "light") imgSrc = "light.png";
-    if (type === "medium") imgSrc = "medium.png";
-    if (type === "heavy") imgSrc = "heavy.png";
-    previewDiv.innerHTML = `<img src="${imgSrc}" onclick="zoomImage('${imgSrc}')">`;
+function showUsagePreview(){
+    const type=document.getElementById("usageSelect").value;
+    const img=type==="light"?"light.png":type==="medium"?"medium.png":"heavy.png";
+    document.getElementById("usagePreview").innerHTML=`<img src="${img}" onclick="zoomImage('${img}')">`;
 }
+function zoomImage(src){ document.getElementById("modalImg").src=src; document.getElementById("imgModal").style.display="flex"; }
 
-function zoomImage(src) {
-    document.getElementById("modalImg").src = src;
-    document.getElementById("imgModal").style.display = "flex";
-}
-
-renderSummaries();
-showUsagePreview();
+renderSummaries(); showUsagePreview();
