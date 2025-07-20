@@ -67,6 +67,24 @@ function renderSummaries(){
             let estDays=avg>0?remaining/avg:0;
             let estDate=new Date(); estDate.setDate(estDate.getDate()+estDays);
 
+	    // Last print date logic
+                       // Last print date logic
+            let lastPrint = cart.logs.length ? new Date(cart.logs[cart.logs.length - 1].date) : null;
+            let warningMsg = "";
+            if (lastPrint) {
+            const daysSince = Math.floor((new Date() - lastPrint) / (1000*60*60*24));
+            if (daysSince >= 7) {
+                warningMsg = `<p style="color:#ff4444; text-shadow:0 0 8px #ff0000;">
+                ⚠️ Last print was ${daysSince} days ago (${lastPrint.toDateString()}). 
+                Print something or cartridge might block!
+            </p>`;
+           } else {
+           warningMsg = `<p style="color:#00ff99;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago)</p>`;
+           }
+           } else {
+           warningMsg = `<p style="color:#ffaa00;">No prints yet! Print soon to avoid cartridge drying.</p>`;
+           }
+		
             let barColor=percentage>60?"#00ff66":percentage>30?"#ffcc00":"#ff4444";
 
             const box=document.createElement("div");
