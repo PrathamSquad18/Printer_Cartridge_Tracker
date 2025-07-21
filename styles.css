@@ -192,3 +192,27 @@ h2 {
 	font-size: 12px;
 	width: auto;
 }
+/* Popup Style */
+.danger-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff4444;
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px #ff2222;
+    font-size: 16px;
+    z-index: 2000;
+    animation: slideIn 0.5s ease-out;
+}
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.warning-text {
+    color: #ff5555;
+    font-weight: bold;
+    margin-top: 8px;
+    text-align: center;
+}
