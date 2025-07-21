@@ -142,7 +142,7 @@ function checkPrintReminder() {
                 // Popup Alert
                 const popup = document.createElement("div");
                 popup.className = "danger-popup";
-                popup.innerText = `⚠ WARNING: Your ${mode.toUpperCase()} - ${type.toUpperCase()} cartridge hasn't printed for ${diffDays} days! Print soon to avoid blockage.`;
+                popup.innerText = `⚠️ WARNING: Your ${mode.toUpperCase()} - ${type.toUpperCase()} cartridge hasn't printed for ${diffDays} days! Print soon to avoid blockage.`;
                 document.body.appendChild(popup);
                 setTimeout(() => popup.remove(), 10000);
 
