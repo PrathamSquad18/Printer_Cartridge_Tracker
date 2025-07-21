@@ -152,7 +152,7 @@ function checkPrintReminder() {
                     if (card.innerText.includes(mode.toUpperCase()) && card.innerText.includes(type.toUpperCase())) {
                         const warn = document.createElement("div");
                         warn.className = "warning-text";
-                        warn.innerText = `⚠ Last print was ${diffDays} days ago. Print soon to prevent blockage!`;
+                        warn.innerText = `⚠️ Last print was ${diffDays} days ago. Print soon to prevent blockage!`;
                         card.parentElement.appendChild(warn);
                     }
                 });
