@@ -81,7 +81,7 @@ function renderSummaries(){
            } else {
            if(daysSince>=5)
 	   {
-		warningMsg = `<p style="color:#00ff99; font-weight: bold; margin-top: 8px; text-align: center;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago). Please take 1 print soon..!</p>`;
+		warningMsg = `<p style="color:#00ff99; font-weight: bold; margin-top: 8px; text-align: center;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago). Print soon to avoid cartridge drying.</p>`;
 	   }
 	   else
 	   {
