@@ -74,15 +74,15 @@ function renderSummaries(){
             if (lastPrint) {
             const daysSince = Math.floor((new Date() - lastPrint) / (1000*60*60*24));
             if (daysSince >= 7) {
-                warningMsg = `<p style="color:#ff4444; text-shadow:0 0 8px #ff0000;">
+                warningMsg = `<p class="warning-text" style="color:#ff4444; text-shadow:0 0 8px #ff0000;">
                 ⚠️ Last print was ${daysSince} days ago (${lastPrint.toDateString()}). 
                 Print something or cartridge might block!
             </p>`;
            } else {
-           warningMsg = `<p style="color:#00ff99;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago)</p>`;
+           warningMsg = `<p class="warning-text" style="color:#00ff99;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago)</p>`;
            }
            } else {
-           warningMsg = `<p style="color:#ffaa00;">No prints yet! Print soon to avoid cartridge drying.</p>`;
+           warningMsg = `<p class="warning-text" style="color:#ffaa00;">No prints yet! Print soon to avoid cartridge drying.</p>`;
            }
 		
             let barColor=percentage>60?"#00ff66":percentage>30?"#ffcc00":"#ff4444";
