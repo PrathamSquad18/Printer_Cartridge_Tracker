@@ -127,6 +127,40 @@ function renderSummaries(){
     });
 }
 
+function checkPrintReminder() {
+    const now = new Date();
+
+    ["black", "color"].forEach(mode => {
+        for (let type in cartridges[mode]) {
+            const logs = cartridges[mode][type].logs;
+            if (!logs.length) continue;
+
+            const lastPrint = new Date(logs[logs.length - 1].date);
+            const diffDays = Math.floor((now - lastPrint) / (1000*60*60*24));
+
+            if (diffDays >= 7) {
+                // Popup Alert
+                const popup = document.createElement("div");
+                popup.className = "danger-popup";
+                popup.innerText = `⚠ WARNING: Your ${mode.toUpperCase()} - ${type.toUpperCase()} cartridge hasn't printed for ${diffDays} days! Print soon to avoid blockage.`;
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 5000);
+
+                // Red Text on Summary Card
+                const cards = document.querySelectorAll(".summary-box h3");
+                cards.forEach(card => {
+                    if (card.innerText.includes(mode.toUpperCase()) && card.innerText.includes(type.toUpperCase())) {
+                        const warn = document.createElement("div");
+                        warn.className = "warning-text";
+                        warn.innerText = `⚠ Last print was ${diffDays} days ago. Print soon to prevent blockage!`;
+                        card.parentElement.appendChild(warn);
+                    }
+                });
+            }
+        }
+    });
+}
+
 function showUsagePreview(){
     const type=document.getElementById("usageSelect").value;
     const img=type==="light"?"light.png":type==="medium"?"medium.png":"heavy.png";
@@ -134,4 +168,6 @@ function showUsagePreview(){
 }
 function zoomImage(src){ document.getElementById("modalImg").src=src; document.getElementById("imgModal").style.display="flex"; }
 
-renderSummaries(); showUsagePreview();
+renderSummaries();
+checkPrintReminder();
+showUsagePreview();
