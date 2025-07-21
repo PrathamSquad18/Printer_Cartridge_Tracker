@@ -151,7 +151,7 @@ function checkPrintReminder() {
                     if (card.innerText.includes(mode.toUpperCase()) && card.innerText.includes(type.toUpperCase())) {
                         const warn = document.createElement("div");
                         warn.className = "warning-text";
-                        warn.innerText = "${warningMsg}";
+                        warn.innerText = ${warningMsg};
                         card.parentElement.appendChild(warn);
                     }
                 });
