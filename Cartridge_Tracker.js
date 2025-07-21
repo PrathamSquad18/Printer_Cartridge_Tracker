@@ -73,13 +73,13 @@ function renderSummaries(){
             let warningMsg = "";
             if (lastPrint) {
             const daysSince = Math.floor((new Date() - lastPrint) / (1000*60*60*24));
-            if (daysSince >= 7) {
+            if (daysSince >= 10) {
                 warningMsg = `<p style="color:#ff4444; text-shadow:0 0 8px #ff0000; font-weight: bold; margin-top: 8px; text-align: center;">
                 ⚠️ Last print was ${daysSince} days ago (${lastPrint.toDateString()}). 
                 Print something or cartridge might block!
             </p>`;
            } else {
-           if(daysSince>=5)
+           if(daysSince>=6)
 	   {
 		warningMsg = `<p style="color:#00ff99; font-weight: bold; margin-top: 8px; text-align: center;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago). Print soon to avoid cartridge drying.</p>`;
 	   }
@@ -145,7 +145,7 @@ function checkPrintReminder() {
             const lastPrint = new Date(logs[logs.length - 1].date);
             const diffDays = Math.floor((now - lastPrint) / (1000*60*60*24));
 
-            if (diffDays >= 7) {
+            if (diffDays >= 10) {
                 // Popup Alert
                 const popup = document.createElement("div");
                 popup.className = "danger-popup";
