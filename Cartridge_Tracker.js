@@ -100,7 +100,6 @@ function renderSummaries(){
                 <p><strong>Printed (Adj.):</strong> ${total.toFixed(0)} pages</p>
                 <p><strong>Remaining:</strong> ${remaining.toFixed(0)} pages</p>
                 <p><strong>Next Refill:</strong> ${estDate.toDateString()} (${estDays.toFixed(1)} days)</p>
-		${warningMsg}
             `;
 
             cart.logs.forEach((log,i)=>{
@@ -152,7 +151,7 @@ function checkPrintReminder() {
                     if (card.innerText.includes(mode.toUpperCase()) && card.innerText.includes(type.toUpperCase())) {
                         const warn = document.createElement("div");
                         warn.className = "warning-text";
-                        warn.innerText = `⚠️ Last print was ${diffDays} days ago. Print soon to prevent blockage!`;
+                        warn.innerText = "${warningMsg}";
                         card.parentElement.appendChild(warn);
                     }
                 });
