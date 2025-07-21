@@ -79,7 +79,14 @@ function renderSummaries(){
                 Print something or cartridge might block!
             </p>`;
            } else {
-           warningMsg = `<p style="color:#00ff99; font-weight: bold; margin-top: 8px; text-align: center;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago)</p>`;
+           if(daysSince>=5)
+	   {
+		warningMsg = `<p style="color:#00ff99; font-weight: bold; margin-top: 8px; text-align: center;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago. Please take print soon..!)</p>`;
+	   }
+	   else
+	   {
+		warningMsg = `<p style="color:#00ff99; font-weight: bold; margin-top: 8px; text-align: center;">Last print: ${lastPrint.toDateString()} (${daysSince} days ago)</p>`;
+	   }
            }
            } else {
            warningMsg = `<p style="color:#ffaa00; font-weight: bold; margin-top: 8px; text-align: center;">No prints yet! Print soon to avoid cartridge drying.</p>`;
