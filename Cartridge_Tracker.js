@@ -100,6 +100,7 @@ function renderSummaries(){
                 <p><strong>Printed (Adj.):</strong> ${total.toFixed(0)} pages</p>
                 <p><strong>Remaining:</strong> ${remaining.toFixed(0)} pages</p>
                 <p><strong>Next Refill:</strong> ${estDate.toDateString()} (${estDays.toFixed(1)} days)</p>
+		${warningMsg}
             `;
 
             cart.logs.forEach((log,i)=>{
@@ -143,18 +144,8 @@ function checkPrintReminder() {
                 popup.className = "danger-popup";
                 popup.innerText = `⚠ WARNING: Your ${mode.toUpperCase()} - ${type.toUpperCase()} cartridge hasn't printed for ${diffDays} days! Print soon to avoid blockage.`;
                 document.body.appendChild(popup);
-                setTimeout(() => popup.remove(), 5000);
+                setTimeout(() => popup.remove(), 10000);
 
-                // Red Text on Summary Card
-                const cards = document.querySelectorAll(".summary-box h3");
-                cards.forEach(card => {
-                    if (card.innerText.includes(mode.toUpperCase()) && card.innerText.includes(type.toUpperCase())) {
-                        const warn = document.createElement("div");
-                        warn.className = "warning-text";
-                        warn.innerText = ${warningMsg};
-                        card.parentElement.appendChild(warn);
-                    }
-                });
             }
         }
     });
